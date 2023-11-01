@@ -1,11 +1,14 @@
 var mysql = require('mysql');    //수업용 MYSQL
 var config = {
-    connectionLimit:100, 
-    host:'localhost', 
-    user:'web', 
-    password:'pass', 
-    database:'webdb', 
-    port:'3306'
+    connectionLimit:100,
+    host:'hd9536.cafe24.com',
+    user:'hd9536',  //cafe24아이디
+    password:'inha1004!', 
+    database:'hd9536',  //cafe24아이디
+    typeCast: function (field, next) {
+        if (field.type == 'VAR_STRING') return field.string();
+        return next();
+    }
 }
 
 var pool = mysql.createPool(config); 
