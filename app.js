@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/crawler', require('./routes/crawler'));// 방경석 크라울러 라우트 추가 
-app.use('/problems', require('./routes/problems'));// 박선우 코딩테스트 라우트 추가
+app.use('/problem', require('./routes/problem'));// 박선우 코딩테스트 라우트 추가
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
