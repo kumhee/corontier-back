@@ -44,6 +44,7 @@ router.post('/execute', function (req, res) {
 
         pythonProcess.on('close', (code) => {
             if (code === 0) {
+                executionResult = executionResult.replace(/\r?\n|\r/g, "");
                 console.log('파이썬 입력코드 실행 결과값', executionResult);
                 res.send(executionResult);
             } else {
@@ -66,12 +67,43 @@ router.post('/execute', function (req, res) {
         }
     };
 
+    const handleJavaExecution = () => {
+        const javaFileName = 'Solution.java';
+        fs.writeFileSync(javaFileName, code);
+
+        const compileCommand = `javac ${javaFileName}`;
+        const runCommand = 'java Main';
+
+        exec(compileCommand, (error, stdout, stderr) => {
+            if (error) {
+                executionResult = `Error during compilation: ${error.message}`;
+                console.error(`Error during compilation: ${error.message}`);
+                res.send(executionResult);
+            } else {
+                exec(runCommand, (error, stdout, stderr) => {
+                    if (error) {
+                        executionResult = `Error during execution: ${error.message}`;
+                        console.error(`Error during execution: ${error.message}`);
+                        res.send(executionResult);
+                    } else {
+                        executionResult = stdout.toString();
+                        console.log('자바 입력코드 실행 결과값 :', executionResult);
+                        res.send(executionResult);
+                    }
+                });
+            }
+        });
+    };
+
     switch (language) {
         case 'python':
             handlePythonExecution();
             break;
         case 'javascript':
             handleJavascriptExecution();
+            break;
+        case 'java':
+            handleJavaExecution();
             break;
         default:
             const errorMessage = 'Unsupported language';
