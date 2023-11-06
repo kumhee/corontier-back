@@ -22,6 +22,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/crawler', require('./routes/crawler'));// 방경석 크라울러 라우트 추가 
+app.use('/project', require('./routes/project')); // 김아름 프로젝트 라우터 추가 1106
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
