@@ -47,4 +47,19 @@ router.get('/projectpick.json', function (req, res) {
     });
 });
 
+//프로시저 사용해보자
+//localhost:5000/project/prcedures?post_id=3
+router.get('/prcedures', function (req, res) { 
+    const post_id = req.query.post_id;
+    const sql = 'call project_list(?)';
+    db.get().query(sql, [post_id], function (err, rows) {
+        if (err) console.log('.........', err);
+        res.send({
+            listAll: rows[0],
+            listOne: rows[1][0],
+            total: rows[2][0].total
+        });
+    });
+});
+
 module.exports = router;
