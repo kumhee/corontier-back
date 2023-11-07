@@ -12,6 +12,27 @@ router.get('/list.json', function (req, res) {
     });
 });
 
+// 문제 태그 리스트
+router.get('/tag/list.json', function(req, res) {
+    const sql = 'select * from tags where tag_type_id = 1';
+    db.get().query(sql, function(err, rows) {
+        res.send(rows);
+    });
+});
+
+// 난이도 리스트
+router.get('/grade/list.json', function(req, res) {
+    const sql = 'select * from grades';
+    db.get().query(sql, function(err, rows) {
+        res.send(rows);
+    });
+});
+
+// // 문제 등록 페이지
+// router.post('/insert', function (req, res) {
+
+// });
+
 // 문제 풀이 페이지
 router.get('/:problem_id', function (req, res) {
     const problem_id = req.params.problem_id;
@@ -29,7 +50,6 @@ const { execFile } = require('child_process');
 router.post('/execute', function (req, res) {
     const { code, language } = req.body;
     let executionResult = '';
-
 
     const handlePythonExecution = () => {
         const pythonProcess = spawn('python', ['-c', code]);
@@ -67,43 +87,12 @@ router.post('/execute', function (req, res) {
         }
     };
 
-    const handleJavaExecution = () => {
-        const javaFileName = 'Solution.java';
-        fs.writeFileSync(javaFileName, code);
-
-        const compileCommand = `javac ${javaFileName}`;
-        const runCommand = 'java Main';
-
-        exec(compileCommand, (error, stdout, stderr) => {
-            if (error) {
-                executionResult = `Error during compilation: ${error.message}`;
-                console.error(`Error during compilation: ${error.message}`);
-                res.send(executionResult);
-            } else {
-                exec(runCommand, (error, stdout, stderr) => {
-                    if (error) {
-                        executionResult = `Error during execution: ${error.message}`;
-                        console.error(`Error during execution: ${error.message}`);
-                        res.send(executionResult);
-                    } else {
-                        executionResult = stdout.toString();
-                        console.log('자바 입력코드 실행 결과값 :', executionResult);
-                        res.send(executionResult);
-                    }
-                });
-            }
-        });
-    };
-
     switch (language) {
         case 'python':
             handlePythonExecution();
             break;
         case 'javascript':
             handleJavascriptExecution();
-            break;
-        case 'java':
-            handleJavaExecution();
             break;
         default:
             const errorMessage = 'Unsupported language';
