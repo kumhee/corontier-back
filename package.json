@@ -22,5 +22,6 @@
     "puppeteer": "^21.5.0",
     "query-string": "^8.1.0",
     "vm2": "^3.9.19"
-  }
+  },
+  "proxy":"http://localhost:5000"
 }
