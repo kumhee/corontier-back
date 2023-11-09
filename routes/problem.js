@@ -8,7 +8,7 @@ router.get('/list.json', function (req, res) {
     const size = req.query.size;
     const sql = 'call problem_list(?, ?)';
     db.get().query(sql, [page, size], function (err, rows) {
-        res.send({ list: rows[0] });
+        res.send({ list: rows[0], total:rows[1][0].total });
     });
 });
 
@@ -94,7 +94,7 @@ router.post('/execute', function (req, res) {
         pythonProcess.on('close', (code) => {
             if (code === 0) {
                 executionResult = executionResult.replace(/\r?\n|\r/g, "");
-                console.log('파이썬 입력코드 실행 결과값', executionResult);
+                console.log('파이썬 입력코드 실행 결과값\n'+ executionResult);
                 res.send(executionResult);
             } else {
                 const errorMessage = `Execution failed with code ${code}`;
