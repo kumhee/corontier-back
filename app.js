@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var mypageRouter = require('./routes/mypage');
 
+
 var app = express();
 
 // view engine setup
@@ -27,7 +28,7 @@ app.use('/community', require('./routes/community')); //김민지 커뮤니티 �
 app.use('/problem', require('./routes/problem'));// 박선우 코딩테스트 라우트 추가
 app.use('/mypage', mypageRouter);// mypage용 라우터 
 app.use('/project', require('./routes/project'));// 김아름 프로젝트게시판 라우트 추가
-
+app.use('/contest', require('./routes/contest'));// 방경석 프로젝트게시판 라우트 추가
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
