@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../db');
+
 var multer = require('multer');
 const fs = require('fs')
 
@@ -8,6 +9,99 @@ const fs = require('fs')
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
+
+
+router.post('/kakaologin', function (req, res) {
+               console.log(req.body.email)
+               const uid = req.body.email;
+               const sql = 'select * from user where email=?';
+               db.get().query(sql, [uid], function (err, rows) {
+                    if(rows.length > 0) {   //아이디있을시
+                         
+                            res.send('1');
+                    }else{
+                         res.send('2');
+                         }
+                    });
+});
+
+
+
+router.post('/kakaologininsert', function (req, res) {
+     console.log(req.body.email)
+     const uid = req.body.email;
+     const unickname = req.body.nickname;
+     const Upassword = req.body.sub;
+     const sql='insert into user(email,password,nickname) values(?,?,?)';
+     db.get().query(sql, [uid,unickname,Upassword], function (err, rows) {
+ 
+               
+                  res.send('1');
+                  if(err){
+                    res.send('2');
+                  }
+     })
+});
+
+
+router.post('/login', function (req, res) {
+    console.log("1번")
+    const email = req.body.email;
+    const Upassword = req.body.Upassword;
+
+    console.log(email)
+    console.log(Upassword)
+    const sql = 'select * from users where email=?';
+    console.log("2번")
+   db.get().query(sql, [email], function (err, rows) {
+    console.log("3번")
+        if(rows.length > 0) {
+            if(rows[0].password == Upassword){
+              console.log(rows)
+               res.send( {'result':'1','user_id':rows[0].user_id});
+            }else{
+            res.send({'result':'2'});
+            }
+       }else{
+            res.send({'result':'0'});
+       }
+  });
+
+  console.log("4번")
+ console.log("로그인시도")
+});
+
+router.post('/insert', function(req, res){
+ 
+  const email=req.body.email;
+  const nickname=req.body.nickname;
+  const Upassword=req.body.Upassword;
+
+  console.log(email, nickname, Upassword);
+
+  const sql='insert into users(email,nickname,password) values(?,?,?)';
+  db.get().query(sql, [email,nickname,Upassword], function (err, rows) {
+    res.send({'result':'1'});
+    if(err){
+      res.send({'result':'2'});
+    }
+   })
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //특정사용자정보읽기 REST API sessionStorage에 어떤컬럼넣을지에 따라 user_id위치 해당컬럼명으로 변경해야함
 router.get('/read/:user_id',function(req,res){
