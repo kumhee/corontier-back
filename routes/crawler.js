@@ -69,6 +69,15 @@ async function scrape(query) {
 
 
 
+router.get('datachecker',  async(req, res) => {
+
+
+    
+})
+
+
+
+
 
 
 router.get('/list.json', async(req, res) => {
