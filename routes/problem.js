@@ -8,30 +8,59 @@ router.get('/list.json', function (req, res) {
     const size = req.query.size;
     const sql = 'call problem_list(?, ?)';
     db.get().query(sql, [page, size], function (err, rows) {
-        res.send({ list: rows[0] });
+        res.send({ list: rows[0], total:rows[1][0].total });
     });
 });
 
 // 문제 태그 리스트
-router.get('/tag/list.json', function(req, res) {
+router.get('/tag/list.json', function (req, res) {
     const sql = 'select * from tags where tag_type_id = 1';
-    db.get().query(sql, function(err, rows) {
+    db.get().query(sql, function (err, rows) {
         res.send(rows);
     });
 });
 
 // 난이도 리스트
-router.get('/grade/list.json', function(req, res) {
+router.get('/grade/list.json', function (req, res) {
     const sql = 'select * from grades';
-    db.get().query(sql, function(err, rows) {
+    db.get().query(sql, function (err, rows) {
         res.send(rows);
     });
 });
 
-// // 문제 등록 페이지
-// router.post('/insert', function (req, res) {
+// 문제 등록
+router.post('/insert', function (req, res) {
+    const { title, content, input, output, grade_id } = req.body;
+    let sql = 'insert into problems (title, content, input, output, grade_id) values ('
+    db.get().query(sql, [title, content, input, output, grade_id], function (err) {
+        if (!err) {
+            sql = 'select last_insert_id() from problems';
+            db.get().query(sql, function (err, rows) {
+                res.send({ last: rows[0].last });
+            });
+        } else {
+            res.send('0');
+        }
+    });
+});
 
-// });
+// 문제 태그 등록
+router.post('/insert/tags', function (req, res) {
+    const problem_id = req.body.problem_id;
+    const tag_ids = req.body.tag_ids;
+
+    const sql = 'insert into problem_tags (problem_id, tag_id) values (?, ?)';
+    tag_ids.forEach(tag_id => {
+        console.log()
+        db.get().query(sql, [problem_id, tag_id], function(err) {
+            if(err) {
+                res.send('0')
+            } else {
+                res.send('1')
+            }
+        });
+    });
+});
 
 // 문제 풀이 페이지
 router.get('/:problem_id', function (req, res) {
@@ -65,7 +94,7 @@ router.post('/execute', function (req, res) {
         pythonProcess.on('close', (code) => {
             if (code === 0) {
                 executionResult = executionResult.replace(/\r?\n|\r/g, "");
-                console.log('파이썬 입력코드 실행 결과값', executionResult);
+                console.log('파이썬 입력코드 실행 결과값\n'+ executionResult);
                 res.send(executionResult);
             } else {
                 const errorMessage = `Execution failed with code ${code}`;

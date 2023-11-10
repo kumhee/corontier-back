@@ -62,4 +62,15 @@ router.get('/prcedures', function (req, res) {
     });
 });
 
+//댓글 list.json
+//localhost:5000/project/commentslist.json?post_id=72
+router.get('/commentslist.json', function (req, res) {
+    const post_id = req.query.post_id;
+    const sql = 'call project_comments_list(?)';
+    db.get().query(sql, [post_id], function (err, rows) {
+        if (err) console.log('.........', err);
+        res.send(rows[0]);
+    });
+});
+
 module.exports = router;
