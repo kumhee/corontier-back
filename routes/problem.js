@@ -130,5 +130,21 @@ router.post('/execute', function (req, res) {
     }
 });
 
+// 풀이 등록
+router.post('/insert/solution', function(req, res) {
+    const problem_id = req.body.problem_id;
+    const content = req.body.content;
+    const complete = req.body.complete;
+    const user_id = req.body.user_id;
+
+    const sql = 'insert into solutions (problem_id, content, complete, user_id) values (?, ?, ?, ?)';
+    db.get().query(sql, [problem_id, content, complete, user_id], function(err) {
+        if(err) {
+            res.send('0');
+        } else {
+            res.send('1');
+        }
+    });
+});
 
 module.exports = router;
