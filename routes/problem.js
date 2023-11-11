@@ -23,11 +23,35 @@ router.get('/tag/list.json', function (req, res) {
     });
 });
 
+// 태그로 문제 검색
+router.get('/by_tag/:tag_id', function(req, res) {
+    const tag_id = req.params.tag_id;
+    const page = req.query.page || 1;
+    const size = req.query.size || 10;
+    
+    const sql = 'call p_list_bytag(?, ?, ?)';
+    db.get().query(sql, [tag_id, page, size], function(err, rows) {
+        res.send({list:rows[0], total:rows[1][0].total});
+    });
+});
+
 // 난이도 리스트
 router.get('/grade/list.json', function (req, res) {
     const sql = 'select * from grades';
     db.get().query(sql, function (err, rows) {
         res.send(rows);
+    });
+});
+
+// 난이도로 문제 검색
+router.get('/by_grade/:grade_id', function(req, res) {
+    const grade_id = req.params.grade_id;
+    const page = req.query.page || 1;
+    const size = req.query.size || 10;
+    
+    const sql = 'call p_list_bygrade(?, ?, ?)';
+    db.get().query(sql, [grade_id, page, size], function(err, rows) {
+        res.send({list:rows[0], total:rows[1][0].total});
     });
 });
 
@@ -206,7 +230,7 @@ router.post('/sol_cmnt/delete', function(req, res) {
 });
 
 // 풀이 제출 여부 확인 - 다른 사람 풀이 볼 수 있는지 체크
-router.get('/clear', function (req, res) {
+router.get('/submit', function (req, res) {
     const problem_id = req.body.problem_id;
     const user_id = req.body.user_id;
 
@@ -217,6 +241,15 @@ router.get('/clear', function (req, res) {
         } else {
             res.send('0'); // 사용자가 문제를 푼 적이 없는 경우
         }
+    });
+});
+
+// 문제 푼 상태 체크
+router.get('/clear/:user_id', function(req, res) {
+    const user_id=req.params.user_id;
+    const sql = 'call user_clear_data(?)';
+    db.get().query(sql, [user_id], function(err, rows) {
+        res.send({list:rows[0], user:rows[1][0]});
     });
 });
 
