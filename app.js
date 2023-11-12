@@ -47,6 +47,12 @@ app.use(function(err, req, res, next) {
 
 
 
+
+console.log("크라울러테스트시작")
+
+
+
+
 var db = require('./db');
 db.connect();
 
