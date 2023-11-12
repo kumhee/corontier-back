@@ -2,15 +2,13 @@ var express = require('express');
 var router = express.Router();
 var db = require('../db');
 
-// 문제 검색
-// router.get
-
 // 문제 list.json
 router.get('/list.json', function (req, res) {
-    const page = req.query.page;
-    const size = req.query.size;
-    const sql = 'call problem_list(?, ?)';
-    db.get().query(sql, [page, size], function (err, rows) {
+    const query = req.query.query || '';
+    const page = req.query.page || 1;
+    const size = req.query.size || 10;
+    const sql = 'call p_list_query(?, ?, ?)';
+    db.get().query(sql, [query, page, size], function (err, rows) {
         res.send({ list: rows[0], total: rows[1][0].total });
     });
 });
@@ -163,10 +161,11 @@ router.post('/insert/solution', function (req, res) {
     const content = req.body.content;
     const complete = req.body.complete;
     const user_id = req.body.user_id;
+    const language = req.body.language
     // console.log(problem_id, content, complete, user_id);
 
-    const sql = 'insert into solutions (problem_id, content, complete, user_id) values (?, ?, ?, ?)';
-    db.get().query(sql, [problem_id, content, complete, user_id], function (err) {
+    const sql = 'insert into solutions (problem_id, content, sel_language, complete, user_id) values (?, ?, ?, ?, ?)';
+    db.get().query(sql, [problem_id, content, language, complete, user_id], function (err) {
         if (err) {
             console.error('풀이 등록 오류 : ', err);
             res.send('0');
@@ -249,7 +248,7 @@ router.get('/clear/:user_id', function(req, res) {
     const user_id=req.params.user_id;
     const sql = 'call user_clear_data(?)';
     db.get().query(sql, [user_id], function(err, rows) {
-        res.send({list:rows[0], user:rows[1][0]});
+        res.send({list:rows[0], user:rows[1][0], clearcnt:rows[2][0]});
     });
 });
 
