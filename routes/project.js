@@ -48,11 +48,13 @@ router.get('/projectpick.json', function (req, res) {
 });
 
 //프로시저 사용해보자
-//localhost:5000/project/prcedures?post_id=3
+//localhost:5000/project/prcedures?post_id=240&page=1&size=9
 router.get('/prcedures', function (req, res) { 
     const post_id = req.query.post_id;
-    const sql = 'call project_list(?)';
-    db.get().query(sql, [post_id], function (err, rows) {
+    const page = req.query.page;
+    const size = req.query.size;
+    const sql = 'call project_list(?, ?, ?)';
+    db.get().query(sql, [post_id, page, size], function (err, rows) {
         if (err) console.log('.........', err);
         res.send({
             listAll: rows[0],
