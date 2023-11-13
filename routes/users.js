@@ -177,4 +177,41 @@ router.post('/update',function(req,res){
   });
 });
 
+
+
+
+
+router.get('/getproblemlanguagecount/:user_id', function(req, res) {
+  const user_id = req.params.user_id;
+  console.log("되냐?");
+  const sql = `SELECT user_id, sel_language, COUNT(sel_language) AS language_count FROM solutions WHERE user_id = ? AND sel_language IS NOT NULL GROUP BY user_id, sel_language; `;
+  db.get().query(sql, [user_id], function(err, rows) {
+    console.log("되냐?");
+    if (err) {
+      console.log(err);
+      res.status(500).send('Server Error');
+      return;
+    }
+    res.send(rows);
+  })
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = router;

@@ -109,6 +109,80 @@ async function scrape(query) {
     return results;
 }
 
+/*
+async function minjiscrape(query) {
+    let browser;
+    const results = [];
+    try {
+        browser = await puppeteer.launch({
+            headless: true,
+            executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+        });
+
+        const page = await browser.newPage();
+        await page.goto('https://www.youtube.com/');
+
+        // 검색어 입력
+        await page.type('#search', query);
+
+        // 검색 버튼 클릭 (YouTube의 검색 버튼 선택자)
+        await page.click('#search-icon-legacy');
+
+        // 검색 결과 로딩 대기
+        await page.waitForNavigation({ waitUntil: 'networkidle2' });
+
+        // 결과 추출
+        const videos = await page.evaluate(() => {
+            const videoElements = document.querySelectorAll('ytd-video-renderer, ytd-grid-video-renderer');
+            const videoList = [];
+            videoElements.forEach((el, index) => {
+                const titleElement = el.querySelector('#video-title');
+                const additionalInfoElement = el.querySelector('.style-scope ytd-video-primary-info-renderer');
+                const title = titleElement ? titleElement.innerText : null;
+                const link = titleElement ? titleElement.href : null;
+                const additionalInfo = additionalInfoElement ? additionalInfoElement.innerText.split('\n') : [];
+
+                if (title && link) {
+                    videoList.push({
+                        index: index + 1,
+                        title: title,
+                        link: link,
+                        additionalInfo: additionalInfo
+                    });
+                }
+            });
+            return videoList;
+        });
+
+        results.push(...videos);
+    } catch (error) {
+        console.error('Scraping failed:', error);
+    } finally {
+        if (browser) {
+            await browser.close();
+        }
+    }
+
+    console.log(results);
+    return results;
+}
+
+minjiscrape("자바")
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
 
 
 function delay(time) {
