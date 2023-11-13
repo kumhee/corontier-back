@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
 router.post('/kakaologin', function (req, res) {
                console.log(req.body.email)
                const uid = req.body.email;
-               const sql = 'select * from user where email=?';
+               const sql = 'select * from users where email=?';
                db.get().query(sql, [uid], function (err, rows) {
                     if(rows.length > 0) {   //아이디있을시
                          
@@ -32,7 +32,7 @@ router.post('/kakaologininsert', function (req, res) {
      const uid = req.body.email;
      const unickname = req.body.nickname;
      const Upassword = req.body.sub;
-     const sql='insert into user(email,password,nickname) values(?,?,?)';
+     const sql='insert into users(email,password,nickname) values(?,?,?)';
      db.get().query(sql, [uid,unickname,Upassword], function (err, rows) {
  
                
