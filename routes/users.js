@@ -19,9 +19,9 @@ router.post('/kakaologin', function (req, res) {
                db.get().query(sql, [uid], function (err, rows) {
                     if(rows.length > 0) {   //아이디있을시
                          
-                            res.send('1');
+                      res.send( {'result':'1','user_id':rows[0].user_id});
                     }else{
-                         res.send('2');
+                      res.send({'result':'2'});
                          }
                     });
 });
@@ -34,12 +34,13 @@ router.post('/kakaologininsert', function (req, res) {
      const unickname = req.body.nickname;
      const Upassword = req.body.sub;
      const sql='insert into users(email,password,nickname) values(?,?,?)';
-     db.get().query(sql, [uid,unickname,Upassword], function (err, rows) {
+     db.get().query(sql, [uid,Upassword,unickname], function (err, rows) {
  
                
-                  res.send('1');
+                    res.send('1');
                   if(err){
-                    res.send('2');
+                    console.log("sql에러?")
+                    res.send({'result':'2'});
                   }
      })
 });
