@@ -107,7 +107,29 @@ router.get('/scraps.list',function(req,res){
         res.send({ 'list': rows, 'total': rows[0].total });
       }
     });
-  }
-  
+  }  
 })
+
+// 오답노트
+router.get('/oxnote.list', function (req, res) {
+  const user_id = parseInt(req.query.user_id);
+  const size = parseInt(req.query.size);
+  const page = parseInt(req.query.page);
+  const start = (page - 1) * size;
+
+  const sql = "SELECT n.*,p.title,p.grade_id,g.grade, (SELECT count(*) FROM oxnote n JOIN problems p ON n.problem_id = p.problem_id WHERE n.user_id = '8') as total FROM oxnote n JOIN problems p ON n.problem_id = p.problem_id join grades g on g.grade_id = p.grade_id  WHERE n.user_id = '8' limit 1,10"
+  
+  db.get().query(sql, [user_id, user_id, start, size], function (err, rows) {
+    if (err) {
+      console.log("에러: ", err);
+      res.status(500).send({ error: "데이터를 불러오는 중 오류가 발생했습니다." });
+    } else if (rows.length === 0) {
+      console.log('결과없음');
+      res.send({ 'list': rows, 'total': 0 });
+    } else {
+      res.send({ 'list': rows, 'total': rows[0].total });
+    }
+  });
+});
+
 module.exports = router;
