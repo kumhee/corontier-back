@@ -3,7 +3,8 @@ var router = express.Router();
 var db = require('../db');
 
 var multer = require('multer');
-const fs = require('fs')
+const fs = require('fs');
+const { route } = require('./mypage');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -160,6 +161,19 @@ router.post('/update/profile',upload.single('file'),function(req,res){
   });
 });
 
+//사용자정보 수정
+router.post('/update',function(req,res){
+  const user_id = req.body.user_id;
+  
+  const email = req.body.email;
+  const nickname = req.body.nickname;
+  const profile_image = req.body.profile_image;
 
+  const sql = 'update users set email =?,nickname=? ,profile_image =? where user_id =?'
+  db.get().query(sql,[email,nickname,profile_image,user_id],function(err){
+    if(err) res.send('0')
+    else res.send('1')
+  });
+});
 
 module.exports = router;
