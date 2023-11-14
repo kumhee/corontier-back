@@ -3,7 +3,8 @@ var router = express.Router();
 var db = require('../db');
 
 var multer = require('multer');
-const fs = require('fs')
+const fs = require('fs');
+const { route } = require('./mypage');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -14,13 +15,13 @@ router.get('/', function(req, res, next) {
 router.post('/kakaologin', function (req, res) {
                console.log(req.body.email)
                const uid = req.body.email;
-               const sql = 'select * from user where email=?';
+               const sql = 'select * from users where email=?';
                db.get().query(sql, [uid], function (err, rows) {
                     if(rows.length > 0) {   //아이디있을시
                          
-                            res.send('1');
+                      res.send( {'result':'1','user_id':rows[0].user_id});
                     }else{
-                         res.send('2');
+                      res.send({'result':'2'});
                          }
                     });
 });
@@ -32,13 +33,14 @@ router.post('/kakaologininsert', function (req, res) {
      const uid = req.body.email;
      const unickname = req.body.nickname;
      const Upassword = req.body.sub;
-     const sql='insert into user(email,password,nickname) values(?,?,?)';
-     db.get().query(sql, [uid,unickname,Upassword], function (err, rows) {
+     const sql='insert into users(email,password,nickname) values(?,?,?)';
+     db.get().query(sql, [uid,Upassword,unickname], function (err, rows) {
  
                
-                  res.send('1');
+                    res.send('1');
                   if(err){
-                    res.send('2');
+                    console.log("sql에러?")
+                    res.send({'result':'2'});
                   }
      })
 });
@@ -159,6 +161,56 @@ router.post('/update/profile',upload.single('file'),function(req,res){
     else res.send('1')
   });
 });
+
+//사용자정보 수정
+router.post('/update',function(req,res){
+  const user_id = req.body.user_id;
+  
+  const email = req.body.email;
+  const nickname = req.body.nickname;
+  const profile_image = req.body.profile_image;
+
+  const sql = 'update users set email =?,nickname=? ,profile_image =? where user_id =?'
+  db.get().query(sql,[email,nickname,profile_image,user_id],function(err){
+    if(err) res.send('0')
+    else res.send('1')
+  });
+});
+
+
+
+
+
+router.get('/getproblemlanguagecount/:user_id', function(req, res) {
+  const user_id = req.params.user_id;
+  console.log("되냐?");
+  const sql = `SELECT user_id, sel_language, COUNT(sel_language) AS language_count FROM solutions WHERE user_id = ? AND sel_language IS NOT NULL GROUP BY user_id, sel_language; `;
+  db.get().query(sql, [user_id], function(err, rows) {
+    console.log("되냐?");
+    if (err) {
+      console.log(err);
+      res.status(500).send('Server Error');
+      return;
+    }
+    res.send(rows);
+  })
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
