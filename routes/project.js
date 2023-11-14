@@ -97,4 +97,17 @@ router.get('/tagsearch.json', function (req, res) {
     });
 });
 
+//게시글 태그 검색용 다시
+//localhost:5000/project/searchbytag.json?tag_name=TypeScript&page=1&size=9
+router.get('/searchbytag.json', function (req, res) {
+    const tag_name = req.query.tag_name;
+    const page = req.query.page;
+    const size = req.query.size;
+    const sql = 'call project_search_tag(?, ?, ?)';
+    db.get().query(sql, [tag_name, page, size], function (err, rows) {
+        if (err) console.log('.........', err);
+        res.send(rows[0]);
+    });
+});
+
 module.exports = router;
