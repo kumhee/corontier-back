@@ -86,7 +86,7 @@ router.get('/lounge/:post_id', function(req, res){// localhost:5000/community/lo
 
 // 프로젝트 & 스터디 목록
 router.get('/applystudy&project.json', function(req, res){
-    const sql='SELECT p.*, u.nickname, date_format(p.created_at, "%Y.%m.%d %T") fmtdate FROM posts p,users u where p.user_id = u.user_id and p.menu = 4;'
+    const sql='SELECT p.*, u.nickname,pr.intro, pr.major, pr.hard, pr.disapoint, date_format(p.created_at, "%Y.%m.%d %T") fmtdate FROM posts p,users u,projects pr where p.user_id = u.user_id and p.post_id = pr.project_id and p.menu = 4;'
     db.get().query(sql,function(err, rows){
         res.send(rows);
     })
@@ -94,7 +94,7 @@ router.get('/applystudy&project.json', function(req, res){
 // 프로젝트 & 스터디 정보
 router.get('/applystudy&project/:post_id', function(req, res){// localhost:5000/community/applystudy&project/51
     const post_id=req.params.post_id;
-    const sql='SELECT p.*, u.nickname, date_format(p.created_at, "%Y.%m.%d %T") fmtdate FROM posts p,users u where p.user_id = u.user_id and p.menu = 4 and post_id=?;'
+    const sql='SELECT p.*, u.nickname,pr.intro, pr.major, pr.hard, pr.disapoint, date_format(p.created_at, "%Y.%m.%d %T") fmtdate FROM posts p,users u,projects pr where p.user_id = u.user_id and p.post_id = pr.project_id and p.menu = 4 and p.post_id=?;'
     db.get().query(sql, [post_id],function(err, rows){
         res.send(rows);
         // console.log(rows)
